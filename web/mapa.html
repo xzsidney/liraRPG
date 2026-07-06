@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radar de Domínios — LiraRPG</title>
+  <meta name="description" content="Radar tático de São Paulo no Mundo das Trevas. Domínios de Vampiros, Lobisomens, Magos e Caçadores." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ----- ESTILOS DO RADAR ----- */
+    .mapa-container {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+      display: flex;
+      background: #02050a; /* Fundo mais escuro/azulado */
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Radar Base */
+    .radar {
+      position: relative;
+      width: 85vh;
+      height: 85vh;
+      max-width: 800px;
+      max-height: 800px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 150, 255, 0.4);
+      background: radial-gradient(circle at center, rgba(0, 50, 100, 0.1) 0%, rgba(0, 10, 20, 0.8) 100%);
+      box-shadow: 0 0 40px rgba(0, 150, 255, 0.1), inset 0 0 60px rgba(0, 150, 255, 0.15);
+      overflow: hidden;
+    }
+
+    /* Crosshairs & Grid Lines */
+    .radar::before, .radar::after {
+      content: ''; position: absolute; background: rgba(0, 150, 255, 0.3);
+    }
+    .radar::before { top: 0; bottom: 0; left: 50%; width: 1px; transform: translateX(-50%); }
+    .radar::after { left: 0; right: 0; top: 50%; height: 1px; transform: translateY(-50%); }
+    
+    .radar-cross-diag1 {
+      position: absolute; inset: 0; border-top: 1px solid rgba(0, 150, 255, 0.15);
+      top: 50%; transform: rotate(45deg);
+    }
+    .radar-cross-diag2 {
+      position: absolute; inset: 0; border-top: 1px solid rgba(0, 150, 255, 0.15);
+      top: 50%; transform: rotate(-45deg);
+    }
+
+    /* Concentric Circles */
+    .radar-circle {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      border: 1px solid rgba(0, 150, 255, 0.25); border-radius: 50%;
+      pointer-events: none;
+    }
+    .rc-1 { width: 25%; height: 25%; }
+    .rc-2 { width: 50%; height: 50%; }
+    .rc-3 { width: 75%; height: 75%; }
+
+    /* Radar Sweep Animation */
+    .radar-sweep {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      transform-origin: center center;
+      background: conic-gradient(from 0deg, transparent 70%, rgba(0, 200, 255, 0.1) 90%, rgba(0, 255, 255, 0.6) 100%);
+      animation: sweep 4s linear infinite;
+      pointer-events: none;
+      border-radius: 50%;
+      z-index: 2;
+    }
+    @keyframes sweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Ponto Central do Radar */
+    .radar-center {
+      position: absolute; top: 50%; left: 50%; width: 8px; height: 8px;
+      transform: translate(-50%, -50%); border-radius: 50%;
+      background: #00ffff; box-shadow: 0 0 15px #00ffff;
+    }
+
+    /* Área Interativa onde os blips são colocados */
+    .map-content {
+      position: absolute; inset: 0; z-index: 5;
+    }
+
+    /* Blips (Nós dos Bairros) */
+    .node-bairro {
+      position: absolute;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #00ffff;
+      box-shadow: 0 0 8px #00ffff;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      /* Efeito de fade (simulado via js ou opacidade) */
+      opacity: 0.8;
+    }
+    .node-bairro::after {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 1px solid currentColor; opacity: 0; transition: all 0.2s;
+    }
+    .node-bairro:hover { transform: translate(-50%, -50%) scale(2); z-index: 10; opacity: 1 !important; }
+    .node-bairro:hover::after { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+
+    /* Cores das Facções no Radar */
+    .fac-vampiro { background: #ff3333; box-shadow: 0 0 12px #ff3333; color: #ff3333; }
+    .fac-lobisomem { background: #33ff33; box-shadow: 0 0 12px #33ff33; color: #33ff33; }
+    .fac-mago { background: #cc33ff; box-shadow: 0 0 12px #cc33ff; color: #cc33ff; }
+    .fac-cacador { background: #ff9933; box-shadow: 0 0 12px #ff9933; color: #ff9933; }
+    .fac-desconhecido { background: #aaaaaa; box-shadow: 0 0 10px #aaaaaa; color: #aaaaaa; }
+
+    /* Blink Animation para os blips */
+    @keyframes blipBlink {
+      0% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+      100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+    }
+    .blip-anim { animation: blipBlink 2s infinite; }
+
+    /* Tooltip Hover */
+    .map-tooltip {
+      position: absolute; pointer-events: none; opacity: 0;
+      background: rgba(2, 5, 10, 0.95); border: 1px solid rgba(0, 150, 255, 0.5);
+      padding: 8px 12px; border-radius: 4px; z-index: 100;
+      font-family: monospace, var(--font-title); font-size: 11px; letter-spacing: 1px;
+      color: #00ffff; text-transform: uppercase;
+      transform: translate(-50%, -120%); transition: opacity 0.2s;
+      white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+    .map-tooltip.visible { opacity: 1; }
+    .tooltip-fac { display: block; font-size: 9px; color: var(--gold-dim); margin-top: 4px; }
+    .tooltip-zona { display: block; font-size: 8px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+
+    /* Sidebar (Dossiê) */
+    .sidebar {
+      width: 400px; background: rgba(5, 5, 12, 0.95); backdrop-filter: blur(16px);
+      border-left: 1px solid rgba(0, 150, 255, 0.3); box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+      position: absolute; right: -420px; top: 0; bottom: 0;
+      transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 20; padding: 32px 24px; overflow-y: auto;
+    }
+    .sidebar.open { right: 0; }
+    .sidebar-close {
+      position: absolute; top: 20px; right: 20px; background: transparent; border: none;
+      color: rgba(0, 150, 255, 0.7); font-size: 24px; cursor: pointer; transition: color 0.2s;
+    }
+    .sidebar-close:hover { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
+
+    /* Estilos do Dossiê */
+    .dossie-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(0, 150, 255, 0.3); }
+    .dossie-title { font-family: var(--font-deco); font-size: 1.8rem; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); line-height: 1.1; margin-bottom: 8px; }
+    .dossie-zona { font-family: monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(0, 200, 255, 0.8); }
+
+    .dossie-block { background: rgba(0, 150, 255, 0.05); border: 1px solid rgba(0, 150, 255, 0.2); border-radius: 4px; padding: 16px; margin-bottom: 16px; }
+    .dossie-label { font-family: monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(0, 200, 255, 0.8); margin-bottom: 6px; }
+    .dossie-value { font-family: var(--font-body); font-size: 0.95rem; color: var(--parchment); line-height: 1.5; }
+
+    .dossie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .dossie-mini-block { border: 1px solid rgba(0, 150, 255, 0.2); border-radius: 4px; padding: 10px; text-align: center; }
+    .mini-label { font-family: monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.5); display: block; margin-bottom: 4px; }
+    .mini-value { font-family: var(--font-title); font-size: 12px; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
+
+    /* Dificuldades (Mecânica) */
+    .diff-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .diff-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(0, 150, 255, 0.08); border-radius: 4px; }
+    .diff-name { font-family: monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .diff-val { font-family: var(--font-deco); font-size: 1.1rem; color: #00ffff; }
+
+    .fac-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; border: 1px solid;
+      font-family: monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; right: -100%; }
+      .mapa-container { height: calc(100vh - 55px); }
+      .radar { width: 95vw; height: 95vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo" aria-label="Voltar à home">
+        <span class="logo-symbol" style="color:#00ffff; text-shadow: 0 0 10px #00ffff;">⚜</span>
+        <div class="logo-text">
+          <span class="logo-title" style="color:#00ffff;">Radar Tático</span>
+          <span class="logo-sub" style="color:rgba(0,150,255,0.8);">São Paulo</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html" class="header-home-link" title="Voltar ao Menu Principal">⚜ Mundo das Trevas</a>
+        <span class="nav-sep">|</span>
+        <a href="vampiro.html" class="header-home-link">Vampiro: A Máscara</a>
+      </nav>
+    </div>
+    <div class="header-bar" style="background: linear-gradient(90deg, transparent, #00ffff, transparent);"></div>
+  </header>
+
+  <!-- MAPA E DOSSIÊ -->
+  <main class="mapa-container">
+    
+    <div class="radar" id="radar">
+      <div class="radar-cross-diag1"></div>
+      <div class="radar-cross-diag2"></div>
+      <div class="radar-circle rc-1"></div>
+      <div class="radar-circle rc-2"></div>
+      <div class="radar-circle rc-3"></div>
+      
+      <!-- O sweep que roda -->
+      <div class="radar-sweep" id="radar-sweep"></div>
+      <div class="radar-center"></div>
+
+      <!-- Onde os blips ficarão -->
+      <div class="map-content" id="map-content"></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="map-tooltip" id="tooltip">
+      <span class="tooltip-zona" id="tt-zona"></span>
+      <span id="tt-nome" style="display:block;"></span>
+      <span class="tooltip-fac" id="tt-fac"></span>
+    </div>
+
+    <!-- Sidebar Dossiê -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" id="sidebar-close" aria-label="Fechar painel">×</button>
+      
+      <div class="dossie-header">
+        <div class="dossie-zona" id="side-zona">ZONA DESCONHECIDA</div>
+        <h2 class="dossie-title" id="side-nome">Nome do Bairro</h2>
+        <div id="side-badge"></div>
+      </div>
+
+      <div class="dossie-grid">
+        <div class="dossie-mini-block">
+          <span class="mini-label">Riqueza</span>
+          <span class="mini-value" id="side-riq">Baixa</span>
+        </div>
+        <div class="dossie-mini-block">
+          <span class="mini-label">Criminalidade</span>
+          <span class="mini-value" id="side-crim">Alta</span>
+        </div>
+      </div>
+
+      <div class="dossie-block">
+        <div class="dossie-label">Segurança Pública</div>
+        <div class="dossie-value" id="side-seg">GCM</div>
+      </div>
+
+      <div class="dossie-block">
+        <div class="dossie-label">Visibilidade Midiática</div>
+        <div class="dossie-value" id="side-vis">Baixa</div>
+      </div>
+
+      <div class="dossie-block" style="background: rgba(0,255,255,0.05); border-color: rgba(0,255,255,0.2);" id="diff-container">
+        <div class="dossie-label" style="color:#00ffff;" id="diff-title">Dificuldades (Rolagens)</div>
+        <div class="diff-list" id="side-diff">
+          <!-- preenchido por js -->
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <script src="data/regiao.js"></script>
+  <script src="mapa.js"></script>
+</body>
+</html>

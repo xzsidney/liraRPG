@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mundo das Trevas — LiraRPG</title>
+  <meta name="description" content="LiraRPG — Portal do Mundo das Trevas. Explore os quatro sistemas: Vampiro: A Máscara, Lobisomem: O Apocalipse, Mago: A Ascensão e Caçador: A Revanche." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #04000a;
+      --gold:      #c9a84c;
+      --gold-dim:  #7a6228;
+      --gold-glow: rgba(201,168,76,0.3);
+      --parchment: #e8dcc8;
+      --dim:       #6a5a4a;
+      --font-d:    'Cinzel Decorative', serif;
+      --font-t:    'Cinzel', serif;
+      --font-b:    'Lora', serif;
+      --ease:      cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+      /* System palette */
+      --vamp-bg:   #1a0005;
+      --vamp-c1:   #8b0000;
+      --vamp-c2:   #c0392b;
+      --vamp-glow: rgba(192,57,43,0.5);
+
+      --wolf-bg:   #030d00;
+      --wolf-c1:   #1a4a00;
+      --wolf-c2:   #4a9a1a;
+      --wolf-glow: rgba(74,154,26,0.45);
+
+      --mage-bg:   #04001a;
+      --mage-c1:   #2a0070;
+      --mage-c2:   #7a40e0;
+      --mage-glow: rgba(122,64,224,0.5);
+
+      --hunt-bg:   #0d0800;
+      --hunt-c1:   #5a3000;
+      --hunt-c2:   #d4820a;
+      --hunt-glow: rgba(212,130,10,0.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--parchment);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+    /* ===== PARTICLES ===== */
+    #particles {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .p {
+      position: absolute; border-radius: 50%;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) scale(1);   opacity: 0; }
+      15%  { opacity: 1; }
+      85%  { opacity: 0.3; }
+      100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 100px 24px 64px;
+      overflow: hidden;
+    }
+    .hero-bg-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,0,0,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(42,0,112,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(74,154,26,0.08) 0%, transparent 60%);
+    }
+    .hero-eyebrow {
+      font-family: var(--font-t); font-size: 11px; letter-spacing: 6px;
+      text-transform: uppercase; color: var(--gold-dim); margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+    }
+    .eyebrow-line { width: 40px; height: 1px; background: var(--gold-dim); }
+
+    .hero-title {
+      font-family: var(--font-d);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+      background: linear-gradient(180deg, #f0d080 0%, #c9a84c 40%, #8a6020 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(201,168,76,0.35));
+    }
+    .hero-subtitle {
+      font-family: var(--font-d); font-size: clamp(1rem, 2.5vw, 1.6rem);
+      letter-spacing: 8px; color: rgba(201,168,76,0.5); margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+    .hero-desc {
+      font-family: var(--font-b); font-style: italic;
+      font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+      color: var(--dim); max-width: 560px; margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+    .hero-divider {
+      display: flex; align-items: center; justify-content: center; gap: 24px;
+      margin-bottom: 16px;
+    }
+    .hdl { flex: 1; max-width: 200px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim)); }
+    .hdl:last-child { background: linear-gradient(270deg, transparent, var(--gold-dim)); }
+    .hdi { font-size: 20px; }
+
+    /* ===== SYSTEMS GRID ===== */
+    .systems-section {
+      position: relative; z-index: 1;
+      max-width: 1300px; margin: 0 auto;
+      padding: 0 32px 100px;
+    }
+    .systems-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 860px) {
+      .systems-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== SYSTEM CARD ===== */
+    .sys-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.4s;
+      background: #08000f;
+      min-height: 520px;
+    }
+    .sys-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+    .sys-card.coming-soon { cursor: default; }
+
+    /* Image */
+    .sys-img-wrap {
+      position: absolute; inset: 0;
+      overflow: hidden;
+    }
+    .sys-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s var(--ease), filter 0.5s;
+      filter: saturate(0.7) brightness(0.55);
+    }
+    .sys-card:not(.coming-soon):hover .sys-img {
+      transform: scale(1.07);
+      filter: saturate(0.9) brightness(0.65);
+    }
+
+    /* CSS fallback bg for Caçador */
+    .sys-img-css {
+      position: absolute; inset: 0;
+      transition: opacity 0.5s;
+    }
+
+    /* Gradient overlay */
+    .sys-overlay {
+      position: absolute; inset: 0;
+      transition: opacity 0.5s;
+    }
+    .sys-card:not(.coming-soon):hover .sys-overlay { opacity: 0.85; }
+
+    /* Decorative corner lines */
+    .sys-corner {
+      position: absolute;
+      width: 28px; height: 28px;
+      border-color: var(--sys-accent, var(--gold-dim));
+      border-style: solid;
+      opacity: 0.4;
+      transition: all 0.4s var(--ease);
+    }
+    .sys-corner.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+    .sys-corner.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+    .sys-corner.bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+    .sys-corner.br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+    .sys-card:not(.coming-soon):hover .sys-corner {
+      opacity: 1; width: 42px; height: 42px;
+    }
+
+    /* Content */
+    .sys-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 36px 32px;
+      z-index: 2;
+    }
+
+    .sys-version {
+      font-family: var(--font-t); font-size: 10px; letter-spacing: 3px;
+      text-transform: uppercase; padding: 4px 12px; border-radius: 12px;
+      border: 1px solid; display: inline-block; margin-bottom: 14px;
+      transition: all 0.3s;
+      width: fit-content;
+    }
+    .sys-card:not(.coming-soon):hover .sys-version {
+      box-shadow: 0 0 12px var(--sys-glow, transparent);
+    }
+
+    .sys-icon {
+      font-size: 2.8rem; margin-bottom: 10px; display: block;
+      filter: drop-shadow(0 0 12px var(--sys-glow, rgba(255,255,255,0.3)));
+      transition: transform 0.4s var(--ease), filter 0.4s;
+    }
+    .sys-card:not(.coming-soon):hover .sys-icon {
+      transform: scale(1.15) rotate(-5deg);
+      filter: drop-shadow(0 0 20px var(--sys-glow, rgba(255,255,255,0.5)));
+    }
+
+    .sys-name {
+      font-family: var(--font-d);
+      font-size: clamp(1.4rem, 2.8vw, 2rem);
+      line-height: 1.15;
+      margin-bottom: 6px;
+      transition: text-shadow 0.3s;
+    }
+    .sys-card:not(.coming-soon):hover .sys-name {
+      text-shadow: 0 0 20px var(--sys-glow, rgba(255,255,255,0.3));
+    }
+
+    .sys-tagline {
+      font-family: var(--font-t); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 14px;
+      opacity: 0.7;
+    }
+
+    .sys-divider {
+      width: 48px; height: 1px; margin-bottom: 14px;
+      transition: width 0.4s var(--ease);
+    }
+    .sys-card:not(.coming-soon):hover .sys-divider { width: 80px; }
+
+    .sys-desc {
+      font-family: var(--font-b); font-style: italic;
+      font-size: 0.88rem; line-height: 1.7;
+      color: rgba(232,220,200,0.75);
+      max-width: 420px;
+      margin-bottom: 20px;
+    }
+
+    /* Key mechanic pill */
+    .sys-mechanic {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-t); font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 14px;
+      border-radius: 20px; border: 1px solid;
+      margin-bottom: 24px; width: fit-content;
+      opacity: 0.8;
+      transition: opacity 0.3s, box-shadow 0.3s;
+    }
+    .sys-card:not(.coming-soon):hover .sys-mechanic {
+      opacity: 1; box-shadow: 0 0 10px var(--sys-glow, transparent);
+    }
+
+    /* CTA */
+    .sys-cta {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-t); font-size: 12px; letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: gap 0.3s;
+    }
+    .sys-cta-arrow {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid; font-size: 16px;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+    .sys-card:not(.coming-soon):hover .sys-cta { gap: 16px; }
+    .sys-card:not(.coming-soon):hover .sys-cta-arrow {
+      transform: translateX(4px);
+      box-shadow: 0 0 14px var(--sys-glow, transparent);
+    }
+
+    /* COMING SOON overlay */
+    .coming-soon-badge {
+      position: absolute; top: 28px; right: 28px; z-index: 10;
+      font-family: var(--font-t); font-size: 10px; letter-spacing: 3px;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 20px;
+      background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(232,220,200,0.5); backdrop-filter: blur(4px);
+    }
+    .sys-card.coming-soon .sys-img { filter: saturate(0.2) brightness(0.35); }
+    .sys-card.coming-soon .sys-content { opacity: 0.5; }
+
+    /* ===== CARD SPECIFIC THEMES ===== */
+
+    /* VAMPIRO */
+    .card-vampiro {
+      --sys-accent: #c0392b;
+      --sys-glow: rgba(192,57,43,0.6);
+    }
+    .card-vampiro .sys-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(26,0,5,0.3) 0%,
+        rgba(26,0,5,0.6) 40%,
+        rgba(26,0,5,0.92) 70%,
+        rgba(26,0,5,0.98) 100%
+      );
+    }
+    .card-vampiro:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(192,57,43,0.25);
+      border-color: rgba(192,57,43,0.4);
+    }
+    .card-vampiro .sys-version {
+      background: rgba(139,0,0,0.3); border-color: rgba(192,57,43,0.5); color: #e87070;
+    }
+    .card-vampiro .sys-name { color: #f0a0a0; }
+    .card-vampiro .sys-tagline { color: rgba(192,57,43,0.9); }
+    .card-vampiro .sys-divider { background: linear-gradient(90deg, #8b0000, transparent); }
+    .card-vampiro .sys-mechanic {
+      background: rgba(139,0,0,0.2); border-color: rgba(192,57,43,0.4); color: #e07070;
+    }
+    .card-vampiro .sys-cta { color: #e07070; }
+    .card-vampiro .sys-cta-arrow { border-color: rgba(192,57,43,0.5); color: #e07070; }
+    .card-vampiro .sys-corner { border-color: #8b0000; }
+
+    /* LOBISOMEM */
+    .card-lobisomem {
+      --sys-accent: #4a9a1a;
+      --sys-glow: rgba(74,154,26,0.6);
+    }
+    .card-lobisomem .sys-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(3,13,0,0.3) 0%,
+        rgba(3,13,0,0.6) 40%,
+        rgba(3,13,0,0.92) 70%,
+        rgba(3,13,0,0.98) 100%
+      );
+    }
+    .card-lobisomem:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(74,154,26,0.2);
+      border-color: rgba(74,154,26,0.35);
+    }
+    .card-lobisomem .sys-version {
+      background: rgba(26,74,0,0.3); border-color: rgba(74,154,26,0.5); color: #80d040;
+    }
+    .card-lobisomem .sys-name { color: #a0e070; }
+    .card-lobisomem .sys-tagline { color: rgba(100,180,40,0.9); }
+    .card-lobisomem .sys-divider { background: linear-gradient(90deg, #2a7000, transparent); }
+    .card-lobisomem .sys-mechanic {
+      background: rgba(26,74,0,0.2); border-color: rgba(74,154,26,0.4); color: #80d040;
+    }
+    .card-lobisomem .sys-cta { color: #80d040; }
+    .card-lobisomem .sys-cta-arrow { border-color: rgba(74,154,26,0.5); color: #80d040; }
+    .card-lobisomem .sys-corner { border-color: #2a7000; }
+
+    /* MAGO */
+    .card-mago {
+      --sys-accent: #7a40e0;
+      --sys-glow: rgba(122,64,224,0.6);
+    }
+    .card-mago .sys-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(4,0,26,0.3) 0%,
+        rgba(4,0,26,0.6) 40%,
+        rgba(4,0,26,0.92) 70%,
+        rgba(4,0,26,0.98) 100%
+      );
+    }
+    .card-mago:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(122,64,224,0.25);
+      border-color: rgba(122,64,224,0.4);
+    }
+    .card-mago .sys-version {
+      background: rgba(42,0,112,0.3); border-color: rgba(122,64,224,0.5); color: #b080f0;
+    }
+    .card-mago .sys-name { color: #c0a0f8; }
+    .card-mago .sys-tagline { color: rgba(160,100,240,0.9); }
+    .card-mago .sys-divider { background: linear-gradient(90deg, #4a00c0, transparent); }
+    .card-mago .sys-mechanic {
+      background: rgba(42,0,112,0.25); border-color: rgba(122,64,224,0.4); color: #b080f0;
+    }
+    .card-mago .sys-cta { color: #b080f0; }
+    .card-mago .sys-cta-arrow { border-color: rgba(122,64,224,0.5); color: #b080f0; }
+    .card-mago .sys-corner { border-color: #4a00c0; }
+
+    /* CAÇADOR */
+    .card-cacador {
+      --sys-accent: #d4820a;
+      --sys-glow: rgba(212,130,10,0.6);
+    }
+    .card-cacador .sys-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(13,8,0,0.3) 0%,
+        rgba(13,8,0,0.6) 40%,
+        rgba(13,8,0,0.92) 70%,
+        rgba(13,8,0,0.98) 100%
+      );
+    }
+    .card-cacador:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(212,130,10,0.2);
+      border-color: rgba(212,130,10,0.35);
+    }
+    .card-cacador .sys-version {
+      background: rgba(90,48,0,0.35); border-color: rgba(212,130,10,0.5); color: #f0a040;
+    }
+    .card-cacador .sys-name { color: #f0c080; }
+    .card-cacador .sys-tagline { color: rgba(220,140,20,0.9); }
+    .card-cacador .sys-divider { background: linear-gradient(90deg, #7a4800, transparent); }
+    .card-cacador .sys-mechanic {
+      background: rgba(90,48,0,0.25); border-color: rgba(212,130,10,0.4); color: #f0a040;
+    }
+    .card-cacador .sys-cta { color: #f0a040; }
+    .card-cacador .sys-cta-arrow { border-color: rgba(212,130,10,0.5); color: #f0a040; }
+    .card-cacador .sys-corner { border-color: #7a4800; }
+
+    /* ===== BOTTOM SECTION ===== */
+    .bottom-lore {
+      position: relative; z-index: 1;
+      text-align: center; padding: 0 24px 80px;
+    }
+    .bottom-divider {
+      display: flex; align-items: center; justify-content: center; gap: 20px;
+      margin-bottom: 32px;
+    }
+    .bdl { flex: 1; max-width: 300px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3)); }
+    .bdl:last-child { background: linear-gradient(270deg, transparent, rgba(201,168,76,0.3)); }
+    .bdi { color: var(--gold-dim); font-size: 16px; }
+
+    .lore-text {
+      font-family: var(--font-b); font-style: italic;
+      font-size: 0.9rem; color: var(--dim); line-height: 2;
+      max-width: 600px; margin: 0 auto;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 20px 24px;
+      font-family: var(--font-t); font-size: 10px; letter-spacing: 2px;
+      color: #3a3030; text-transform: uppercase;
+      border-top: 1px solid rgba(201,168,76,0.08);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim { opacity: 0; animation: fadeInUp 0.8s var(--ease) forwards; }
+    .anim-1 { animation-delay: 0.1s; }
+    .anim-2 { animation-delay: 0.25s; }
+    .anim-3 { animation-delay: 0.4s; }
+    .anim-4 { animation-delay: 0.15s; }
+    .anim-5 { animation-delay: 0.3s; }
+    .anim-6 { animation-delay: 0.45s; }
+    .anim-7 { animation-delay: 0.6s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .systems-section { padding: 0 16px 60px; }
+      .hero { padding: 60px 20px 40px; }
+      .sys-content { padding: 24px 20px; }
+      .sys-name { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PARTICLES -->
+  <div id="particles" aria-hidden="true"></div>
+
+  <!-- HERO -->
+  <header class="hero" role="banner">
+    <div class="hero-bg-glow" aria-hidden="true"></div>
+
+    <p class="hero-eyebrow anim anim-1">
+      <span class="eyebrow-line"></span>
+      LiraRPG · Portal dos Sistemas
+      <span class="eyebrow-line"></span>
+    </p>
+
+    <h1 class="hero-title anim anim-2">Mundo<br/>das Trevas</h1>
+    <p class="hero-subtitle anim anim-3">World of Darkness</p>
+
+    <p class="hero-desc anim anim-3">
+      Quatro sistemas. Quatro perspectivas da noite. Uma única verdade:
+      os monstros são reais — e alguns deles ainda lutam para lembrar o que são.
+    </p>
+
+    <div class="hero-divider anim anim-3">
+      <span class="hdl"></span>
+      <span class="hdi">🩸</span>
+      <span class="hdl"></span>
+    </div>
+  </header>
+
+  <!-- SYSTEMS -->
+  <main class="systems-section" role="main">
+    <div class="systems-grid">
+
+      <!-- ── VAMPIRO ── -->
+      <a href="vampiro.html" class="sys-card card-vampiro anim anim-4" id="card-vampiro"
+         aria-label="Acessar Vampiro: A Máscara">
+        <div class="sys-img-wrap">
+          <img class="sys-img" src="assets/systems/sistema_vampiro.png"
+               alt="Arte do sistema Vampiro: A Máscara" />
+        </div>
+        <div class="sys-overlay"></div>
+        <span class="sys-corner tl"></span>
+        <span class="sys-corner tr"></span>
+        <span class="sys-corner bl"></span>
+        <span class="sys-corner br"></span>
+
+        <div class="sys-content">
+          <span class="sys-version">V5 · Vampiro</span>
+          <span class="sys-icon" aria-hidden="true">🎭</span>
+          <h2 class="sys-name">Vampiro:<br/>A Máscara</h2>
+          <p class="sys-tagline">Horror Pessoal & Intriga Política</p>
+          <div class="sys-divider"></div>
+          <p class="sys-desc">
+            Você foi transformado em um monstro sugador de sangue. A Besta dentro de você
+            uiva por sangue enquanto a sociedade vampírica exige elegância. Equilibre sua
+            Humanidade — ou sucumba à escuridão.
+          </p>
+          <div class="sys-mechanic">
+            <span>⚡</span> Mecânica: Fome · Humanidade · Disciplinas
+          </div>
+          <div class="sys-cta">
+            <span>Ver Personagens</span>
+            <span class="sys-cta-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ── LOBISOMEM ── -->
+      <div class="sys-card card-lobisomem coming-soon anim anim-5" id="card-lobisomem"
+           role="article" aria-label="Lobisomem: O Apocalipse — Em desenvolvimento">
+        <span class="coming-soon-badge">Em Desenvolvimento</span>
+        <div class="sys-img-wrap">
+          <img class="sys-img" src="assets/systems/sistema_lobisomem.png"
+               alt="Arte do sistema Lobisomem: O Apocalipse" />
+        </div>
+        <div class="sys-overlay"></div>
+        <span class="sys-corner tl"></span>
+        <span class="sys-corner tr"></span>
+        <span class="sys-corner bl"></span>
+        <span class="sys-corner br"></span>
+
+        <div class="sys-content">
+          <span class="sys-version">W5 · Lobisomem</span>
+          <span class="sys-icon" aria-hidden="true">🐺</span>
+          <h2 class="sys-name">Lobisomem:<br/>O Apocalipse</h2>
+          <p class="sys-tagline">Horror Feral & Tragédia Ambiental</p>
+          <div class="sys-divider"></div>
+          <p class="sys-desc">
+            Os Garou são guerreiros sagrados de Gaia, lutando uma batalha perdida contra
+            a Devastadora. Cada ato de fúria pode salvar o mundo — ou destruí-lo.
+            Harano ou Hauglosk: qual será seu fim?
+          </p>
+          <div class="sys-mechanic">
+            <span>⚡</span> Mecânica: Fúria · Renome · Cinco Formas
+          </div>
+          <div class="sys-cta">
+            <span>Em Breve</span>
+            <span class="sys-cta-arrow">🔒</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MAGO ── -->
+      <div class="sys-card card-mago coming-soon anim anim-6" id="card-mago"
+           role="article" aria-label="Mago: A Ascensão — Em desenvolvimento">
+        <span class="coming-soon-badge">Em Desenvolvimento</span>
+        <div class="sys-img-wrap">
+          <img class="sys-img" src="assets/systems/sistema_mago.png"
+               alt="Arte do sistema Mago: A Ascensão" />
+        </div>
+        <div class="sys-overlay"></div>
+        <span class="sys-corner tl"></span>
+        <span class="sys-corner tr"></span>
+        <span class="sys-corner bl"></span>
+        <span class="sys-corner br"></span>
+
+        <div class="sys-content">
+          <span class="sys-version">M20 · Mago</span>
+          <span class="sys-icon" aria-hidden="true">🔮</span>
+          <h2 class="sys-name">Mago:<br/>A Ascensão</h2>
+          <p class="sys-tagline">A Luta pela Realidade</p>
+          <div class="sys-divider"></div>
+          <p class="sys-desc">
+            A realidade é maleável — moldada pela crença coletiva. Você Despertou para
+            esta verdade e agora briga contra a Tecnocracia pelo direito de definir o
+            que é real. Nove Esferas. Infinitas possibilidades. Um Paradoxo mortal.
+          </p>
+          <div class="sys-mechanic">
+            <span>⚡</span> Mecânica: 9 Esferas · Arete · Paradoxo
+          </div>
+          <div class="sys-cta">
+            <span>Em Breve</span>
+            <span class="sys-cta-arrow">🔒</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CAÇADOR ── -->
+      <div class="sys-card card-cacador coming-soon anim anim-7" id="card-cacador"
+           role="article" aria-label="Caçador: A Revanche — Em desenvolvimento">
+        <span class="coming-soon-badge">Em Desenvolvimento</span>
+        <div class="sys-img-wrap">
+          <!-- CSS Art fallback - sem imagem gerada -->
+          <div class="sys-img-css" style="
+            background:
+              radial-gradient(ellipse 60% 80% at 30% 20%, rgba(212,130,10,0.25) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 60% at 70% 80%, rgba(90,48,0,0.4) 0%, transparent 50%),
+              linear-gradient(160deg, #1a0e00 0%, #0d0800 40%, #040200 100%);
+          ">
+            <!-- Hunter silhouette via CSS -->
+            <svg viewBox="0 0 400 520" style="width:100%;height:100%;opacity:0.25;" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="200" cy="120" rx="35" ry="35" fill="#d4820a"/>
+              <rect x="168" y="155" width="64" height="90" rx="8" fill="#d4820a"/>
+              <rect x="130" y="158" width="38" height="18" rx="6" fill="#d4820a"/>
+              <rect x="232" y="158" width="38" height="18" rx="6" fill="#d4820a"/>
+              <rect x="168" y="245" width="28" height="80" rx="6" fill="#d4820a"/>
+              <rect x="204" y="245" width="28" height="80" rx="6" fill="#d4820a"/>
+              <line x1="105" y1="165" x2="55" y2="175" stroke="#d4820a" stroke-width="3"/>
+              <rect x="15" y="170" width="42" height="10" rx="4" fill="#d4820a"/>
+              <circle cx="200" cy="400" r="80" stroke="rgba(212,130,10,0.15)" stroke-width="2" stroke-dasharray="8 6"/>
+              <circle cx="200" cy="400" r="120" stroke="rgba(212,130,10,0.08)" stroke-width="1" stroke-dasharray="4 8"/>
+            </svg>
+          </div>
+        </div>
+        <div class="sys-overlay" style="background:linear-gradient(160deg,rgba(13,8,0,0.5) 0%,rgba(13,8,0,0.75) 40%,rgba(13,8,0,0.96) 100%);"></div>
+        <span class="sys-corner tl"></span>
+        <span class="sys-corner tr"></span>
+        <span class="sys-corner bl"></span>
+        <span class="sys-corner br"></span>
+
+        <div class="sys-content">
+          <span class="sys-version">H5 · Caçador</span>
+          <span class="sys-icon" aria-hidden="true">🔫</span>
+          <h2 class="sys-name">Caçador:<br/>A Revanche</h2>
+          <p class="sys-tagline">O Oprimido Contra o Sobrenatural</p>
+          <div class="sys-divider"></div>
+          <p class="sys-desc">
+            Você é humano. Sem superpoderes divinos, sem magia ancestral. Só perspicácia,
+            fé, equipamento e a determinação de que a humanidade não será apenas gado.
+            O desespero é seu combustível. Cuide para não se queimar.
+          </p>
+          <div class="sys-mechanic">
+            <span>⚡</span> Mecânica: Ímpeto · Credo · Trunfos
+          </div>
+          <div class="sys-cta">
+            <span>Em Breve</span>
+            <span class="sys-cta-arrow">🔒</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- BOTTOM LORE -->
+  <section class="bottom-lore" aria-label="Citação do universo">
+    <div class="bottom-divider">
+      <span class="bdl"></span>
+      <span class="bdi">⚜</span>
+      <span class="bdl"></span>
+    </div>
+    <p class="lore-text">
+      "A noite pertence a muitos. Vampiros que conspiram em salões dourados.
+      Lobisomens que uivam para uma lua moribunda. Magos que dobram a realidade
+      com a força da vontade. E humanos que recusam aceitar que são presas."
+    </p>
+
+    <div style="margin-top: 40px;">
+      <a href="mapa.html" class="sys-mechanic" style="text-decoration:none; border-color:var(--gold); color:var(--gold);">
+        🗺️ Acessar Mapa Tático da Cidade
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p>LiraRPG &bull; Mundo das Trevas &bull; World of Darkness &bull; Curitiba</p>
+  </footer>
+
+  <script>
+    // Particles
+    (function() {
+      const c = document.getElementById('particles');
+      const systems = [
+        { color: '192,57,43', count: 8 },
+        { color: '74,154,26', count: 6 },
+        { color: '122,64,224', count: 6 },
+        { color: '212,130,10', count: 5 },
+        { color: '201,168,76', count: 4 },
+      ];
+      systems.forEach(({ color, count }) => {
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('div');
+          p.className = 'p';
+          const size = 1.5 + Math.random() * 2.5;
+          p.style.cssText = `
+            left: ${Math.random() * 100}%;
+            top: ${80 + Math.random() * 20}%;
+            width: ${size}px; height: ${size}px;
+            background: rgb(${color});
+            box-shadow: 0 0 ${size * 3}px rgba(${color}, 0.6);
+            animation-delay: ${Math.random() * 15}s;
+            animation-duration: ${10 + Math.random() * 20}s;
+          `;
+          c.appendChild(p);
+        }
+      });
+    })();
+
+    // Intersection observer for card entrance animations
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.style.animationPlayState = 'running';
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.anim').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        obs.observe(el);
+      });
+    }
+  </script>
+</body>
+</html>

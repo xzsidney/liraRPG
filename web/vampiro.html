@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vampiro: A Máscara — Camarilla de Curitiba | LiraRPG</title>
+  <meta name="description" content="Galeria de personagens da Camarilla de Curitiba no universo Vampiro: A Máscara. Conheça os membros da noite — LiraRPG." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- PARTICLES BACKGROUND -->
+  <div id="particles" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+  <header id="main-header">
+    <div class="header-inner">
+      <div class="header-logo" id="logo-btn" role="button" tabindex="0" aria-label="Voltar à galeria">
+        <span class="logo-symbol">⚜</span>
+        <div class="logo-text">
+          <span class="logo-title">Camarilla</span>
+          <span class="logo-sub">de Curitiba</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="header-home-link" title="Voltar ao Menu Principal">⚜ Mundo das Trevas</a>
+        <span class="nav-sep">|</span>
+        <a href="mapa.html" class="header-home-link">🗺️ Mapa da Cidade</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-game">Vampiro: A Máscara</span>
+        <span class="nav-sep">|</span>
+        <span class="nav-system">LiraRPG</span>
+      </nav>
+    </div>
+    <div class="header-bar"></div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="app">
+
+    <!-- ===================== GALLERY VIEW ===================== -->
+    <section id="gallery-view" class="view active">
+      <div class="gallery-hero">
+        <h1 class="gallery-title">Os Filhos da Noite</h1>
+        <p class="gallery-subtitle">Treze almas condenadas habitam as sombras de Curitiba. Escolha um, se ousar conhecê-lo.</p>
+        <div class="gallery-divider">
+          <span class="divider-line"></span>
+          <span class="divider-icon">🩸</span>
+          <span class="divider-line"></span>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all" id="filter-all">Todos</button>
+        <button class="filter-btn" data-filter="Ventrue" id="filter-ventrue">👑 Ventrue</button>
+        <button class="filter-btn" data-filter="Gangrel" id="filter-gangrel">🐺 Gangrel</button>
+        <button class="filter-btn" data-filter="Toreador" id="filter-toreador">🌹 Toreador</button>
+        <button class="filter-btn" data-filter="Nosferatu" id="filter-nosferatu">🦇 Nosferatu</button>
+        <button class="filter-btn" data-filter="Brujah" id="filter-brujah">✊ Brujah</button>
+        <button class="filter-btn" data-filter="Tremere" id="filter-tremere">🔮 Tremere</button>
+      </div>
+
+      <div class="card-grid" id="card-grid" role="list"></div>
+    </section>
+
+    <!-- ===================== DETAIL VIEW ===================== -->
+    <section id="detail-view" class="view" aria-live="polite">
+      <button class="back-btn" id="back-btn" aria-label="Voltar à galeria">
+        <span class="back-arrow">←</span> Voltar à Galeria
+      </button>
+
+      <div class="detail-container" id="detail-container">
+        <!-- dynamically filled -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>LiraRPG &bull; Vampiro: A Máscara &bull; Camarilla de Curitiba &bull; Sistema World of Darkness</p>
+  </footer>
+
+  <script src="data/characters.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
