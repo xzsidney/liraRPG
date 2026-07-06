@@ -178,6 +178,7 @@
             <div class="detail-cla-badge" style="background:${cfg.cor}44;color:${cfg.corTexto};border-color:${cfg.corTexto}55;">
               ${cfg.icone} ${char.cla}
             </div>
+            <a href="missoes.html?char_id=${char.id}" class="btn-missions" style="float: right;">🩸 Missões Solo</a>
             <h1 class="detail-nome">${char.nome}</h1>
             ${char.pseudonimo ? `<p class="detail-pseudonimo">Também conhecida como "${char.pseudonimo}"</p>` : ''}
             <p class="detail-conceito">${char.seita} · ${char.conceito}</p>

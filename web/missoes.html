@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central de Missões — LiraRPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .mission-container {
+      max-width: 1000px; margin: 40px auto; padding: 20px;
+    }
+    .char-header {
+      display: flex; align-items: center; gap: 24px;
+      background: rgba(10,0,10,0.6); border: 1px solid var(--border-dark);
+      padding: 24px; border-radius: var(--radius); margin-bottom: 40px;
+      backdrop-filter: blur(8px);
+    }
+    .char-portrait {
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 2px solid var(--gold-dim); object-fit: cover;
+    }
+    .char-info h2 {
+      font-family: var(--font-deco); font-size: 2rem; color: var(--gold); margin-bottom: 8px;
+    }
+    .char-info p {
+      font-family: var(--font-title); font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--parchment-dim);
+    }
+    
+    .mission-list {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;
+    }
+    .mission-card {
+      background: rgba(20,0,5,0.4); border: 1px solid var(--border-mid);
+      border-radius: var(--radius); padding: 24px;
+      transition: all var(--transition); cursor: pointer; text-decoration: none; display: block;
+    }
+    .mission-card:hover {
+      background: rgba(40,0,10,0.6); border-color: var(--blood-bright);
+      transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    .mission-tag {
+      display: inline-block; padding: 4px 10px; background: rgba(139,0,0,0.2);
+      border: 1px solid var(--blood-bright); color: var(--blood-bright);
+      font-family: 'Share Tech Mono', monospace; font-size: 10px; text-transform: uppercase;
+      border-radius: 12px; margin-bottom: 16px;
+    }
+    .mission-title {
+      font-family: var(--font-title); font-size: 1.5rem; color: var(--parchment); margin-bottom: 12px;
+    }
+    .mission-desc {
+      font-family: var(--font-body); font-size: 0.95rem; color: var(--text-dim); line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <span class="logo-symbol">⚜</span>
+        <div class="logo-text">
+          <span class="logo-title">Missões Solo</span>
+          <span class="logo-sub">RPG Interativo</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="vampiro.html" class="header-home-link">← Voltar à Galeria</a>
+      </nav>
+    </div>
+    <div class="header-bar"></div>
+  </header>
+
+  <main class="mission-container">
+    <div class="char-header" id="char-header" style="display:none;">
+      <img id="char-img" class="char-portrait" src="" alt="" />
+      <div class="char-info">
+        <p>Operativo Selecionado</p>
+        <h2 id="char-name">Nome</h2>
+        <p id="char-clan">Clã</p>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--font-title); color: var(--gold); border-bottom: 1px solid var(--border-dark); padding-bottom: 12px; margin-bottom: 24px;">Missões Disponíveis</h3>
+    
+    <div class="mission-list" id="mission-list">
+      <!-- Injetado via JS -->
+    </div>
+  </main>
+
+  <script src="data/characters.js"></script>
+  <script src="data/missoes.js"></script>
+  <script src="missoes.js"></script>
+</body>
+</html>

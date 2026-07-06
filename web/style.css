@@ -515,6 +515,14 @@ body {
   background: rgba(139,0,0,0.05); border: 1px solid rgba(139,0,0,0.2);
   border-radius: var(--radius-lg); padding: 20px; margin-bottom: 20px;
 }
+.char-name { font-family: var(--font-deco); font-size: 2.8rem; color: var(--gold); line-height: 1.1; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+.char-meta { font-family: var(--font-title); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dim); margin-top: 8px; }
+.char-concept { color: var(--parchment-dim); font-style: italic; text-transform: none; font-family: var(--font-body); font-size: 0.95rem; }
+
+.btn-missions { display: inline-block; padding: 6px 14px; background: rgba(139,0,0,0.2); border: 1px solid var(--blood); color: var(--blood-bright); font-family: var(--font-title); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; border-radius: 4px; margin-bottom: 12px; transition: all var(--transition); }
+.btn-missions:hover { background: var(--blood); color: #fff; box-shadow: 0 0 15px var(--blood-glow); transform: translateY(-2px); }
+
+/* --- TABS --- */
 .dicas-label {
   font-family: var(--font-title); font-size: 10px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--blood-bright); margin-bottom: 10px;

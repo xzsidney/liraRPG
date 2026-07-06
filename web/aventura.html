@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aventura Solo — LiraRPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    /* ----- TERMINAL HACKER THEME ----- */
+    :root {
+      --term-bg: #050505;
+      --term-green: #33ff33;
+      --term-dim: #115511;
+      --term-red: #ff3333;
+      --term-alert: #ffaa00;
+      --term-font: 'Share Tech Mono', monospace;
+    }
+    
+    body {
+      margin: 0; padding: 0; background: var(--term-bg); color: var(--term-green);
+      font-family: var(--term-font); overflow: hidden; display: flex;
+    }
+    
+    /* Scanlines effect */
+    body::before {
+      content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
+    }
+    
+    /* CRT Flicker */
+    @keyframes flicker {
+      0% { opacity: 0.95; } 5% { opacity: 0.85; } 10% { opacity: 0.95; }
+      15% { opacity: 1; } 100% { opacity: 1; }
+    }
+    
+    .screen {
+      display: flex; width: 100vw; height: 100vh; position: relative;
+      animation: flicker 4s infinite; padding: 20px; box-sizing: border-box;
+      z-index: 1; text-shadow: 0 0 5px var(--term-green);
+    }
+    
+    /* --- SIDEBAR: STATUS --- */
+    .status-panel {
+      width: 300px; border-right: 2px solid var(--term-dim); padding-right: 20px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .sys-title {
+      font-size: 24px; text-transform: uppercase; border-bottom: 2px solid var(--term-green);
+      padding-bottom: 10px; margin-bottom: 10px; color: #fff;
+    }
+    .char-info { font-size: 14px; line-height: 1.5; }
+    .stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .stat-label { color: var(--term-dim); }
+    
+    .logs-panel { flex: 1; overflow-y: auto; border: 1px solid var(--term-dim); padding: 10px; font-size: 12px; }
+    .log-entry { margin-bottom: 5px; }
+    .log-roll { color: var(--term-alert); }
+    .log-success { color: var(--term-green); }
+    .log-fail { color: var(--term-red); }
+    
+    /* --- MAIN: TERMINAL --- */
+    .main-panel {
+      flex: 1; padding-left: 20px; display: flex; flex-direction: column;
+    }
+    .scene-header {
+      font-size: 20px; margin-bottom: 20px; color: #fff; border-left: 5px solid var(--term-green); padding-left: 10px;
+    }
+    .scene-desc {
+      font-size: 16px; line-height: 1.6; margin-bottom: 40px;
+    }
+    
+    .actions-list {
+      display: flex; flex-direction: column; gap: 15px; margin-top: auto; padding-bottom: 20px;
+    }
+    
+    .action-btn {
+      background: transparent; border: 1px solid var(--term-dim); color: var(--term-green);
+      font-family: var(--term-font); font-size: 14px; text-align: left; padding: 15px;
+      cursor: pointer; transition: all 0.2s; position: relative; text-shadow: 0 0 5px var(--term-green);
+    }
+    .action-btn:hover {
+      background: rgba(51, 255, 51, 0.1); border-color: var(--term-green); padding-left: 25px;
+    }
+    .action-btn::before {
+      content: ">"; position: absolute; left: 10px; opacity: 0; transition: opacity 0.2s;
+    }
+    .action-btn:hover::before { opacity: 1; }
+    
+    .action-meta { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; color: var(--term-dim); }
+    
+    .btn-quit {
+      margin-top: 20px; background: transparent; border: 1px solid var(--term-red); color: var(--term-red);
+      padding: 10px; cursor: pointer; font-family: var(--term-font);
+    }
+    .btn-quit:hover { background: rgba(255,51,51,0.2); }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--term-bg); border-left: 1px solid var(--term-dim); }
+    ::-webkit-scrollbar-thumb { background: var(--term-dim); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--term-green); }
+
+  </style>
+</head>
+<body>
+
+  <div class="screen">
+    
+    <!-- Painel Lateral -->
+    <aside class="status-panel">
+      <div class="sys-title">SHADOW.NET v2.4</div>
+      <div class="char-info" id="char-info">
+        <div class="stat-row"><span class="stat-label">OPERATIVO:</span><span id="p-nome">Carregando...</span></div>
+        <div class="stat-row"><span class="stat-label">CLÃ:</span><span id="p-cla">-</span></div>
+        <br>
+        <div class="stat-row"><span class="stat-label">FOME:</span><span id="p-fome">-</span></div>
+        <div class="stat-row"><span class="stat-label">VONTADE:</span><span id="p-fdv">-</span></div>
+        <div class="stat-row"><span class="stat-label">HUMANIDADE:</span><span id="p-hum">-</span></div>
+      </div>
+      
+      <div style="color:var(--term-dim); margin-top:10px;">[ SYSTEM LOGS ]</div>
+      <div class="logs-panel" id="logs">
+        <div class="log-entry">Sistema iniciado.</div>
+      </div>
+      
+      <button class="btn-quit" onclick="window.location.href='vampiro.html'">[ ABORTAR MISSÃO ]</button>
+    </aside>
+
+    <!-- Painel Principal -->
+    <main class="main-panel">
+      <div id="scene-container">
+        <div class="scene-header" id="s-title">Inicializando Cena...</div>
+        <div class="scene-desc" id="s-desc">Conectando ao banco de dados...</div>
+        <div class="actions-list" id="s-actions">
+          <!-- Botões injetados via JS -->
+        </div>
+      </div>
+    </main>
+    
+  </div>
+
+  <script src="data/characters.js"></script>
+  <script src="data/missoes.js"></script>
+  <script src="aventura.js"></script>
+</body>
+</html>

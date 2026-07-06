@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aventura Solo (VN) — LiraRPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ----- VISUAL NOVEL THEME ----- */
+    body {
+      margin: 0; padding: 0; overflow: hidden; background: #000;
+    }
+    .vn-container {
+      position: relative; width: 100vw; height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      background: url('assets/systems/sistema_vampiro.png') center/cover no-repeat;
+    }
+    
+    .vn-bg-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.9) 100%);
+      backdrop-filter: blur(4px);
+    }
+
+    /* --- TOP BAR: STATUS --- */
+    .vn-topbar {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+      padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(10,0,0,0.8), transparent);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .vn-topbar-title {
+      font-family: var(--font-deco); font-size: 1.5rem; color: var(--gold);
+    }
+    .vn-stats {
+      display: flex; gap: 20px; font-family: var(--font-title); font-size: 11px;
+      letter-spacing: 2px; color: var(--parchment); text-transform: uppercase;
+    }
+    .stat-badge {
+      background: rgba(0,0,0,0.6); padding: 5px 12px; border: 1px solid var(--border-mid); border-radius: 4px;
+    }
+    .stat-val { color: var(--gold); font-size: 14px; font-weight: bold; margin-left: 5px; }
+    .stat-val.blood { color: var(--blood-bright); }
+
+    /* --- PORTRAIT LEFT --- */
+    .vn-portrait-area {
+      position: absolute; bottom: 0; left: 5%; z-index: 5;
+      width: 400px; height: 80vh; pointer-events: none;
+      display: flex; align-items: flex-end;
+    }
+    .vn-portrait {
+      width: 100%; object-fit: contain; object-position: bottom left;
+      filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
+      /* A base da imagem encosta em baixo */
+      max-height: 100%;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+    }
+
+    /* --- DIALOG BOX --- */
+    .vn-dialog-area {
+      position: relative; z-index: 10; width: 100%; padding: 40px;
+      display: flex; justify-content: center; align-items: flex-end;
+      padding-bottom: 50px;
+    }
+    .vn-dialog-box {
+      width: 800px; max-width: 90%; background: rgba(10, 0, 10, 0.85);
+      border: 2px solid var(--border-dark); border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.02);
+      backdrop-filter: blur(10px); display: flex; flex-direction: column;
+    }
+
+    /* Scene Header */
+    .vn-scene-title {
+      font-family: var(--font-title); font-size: 14px; letter-spacing: 4px;
+      color: var(--gold-dim); text-transform: uppercase;
+      padding: 15px 25px; border-bottom: 1px solid var(--border-dark);
+      background: rgba(0,0,0,0.4); border-radius: 12px 12px 0 0;
+    }
+
+    /* Story Text */
+    .vn-story-text {
+      font-family: var(--font-body); font-size: 1.15rem; color: var(--parchment);
+      line-height: 1.7; padding: 25px; min-height: 120px;
+    }
+
+    /* Actions List */
+    .vn-actions {
+      padding: 0 25px 25px 25px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .vn-btn {
+      background: rgba(0,0,0,0.5); border: 1px solid var(--border-mid);
+      color: var(--parchment); font-family: var(--font-body); font-size: 1rem;
+      padding: 12px 20px; border-radius: 6px; cursor: pointer; text-align: left;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .vn-btn:hover {
+      background: rgba(139,0,0,0.2); border-color: var(--blood-bright);
+      transform: translateX(5px);
+    }
+    .vn-btn-meta {
+      display: block; font-family: var(--font-title); font-size: 10px;
+      letter-spacing: 1px; color: var(--gold-dim); margin-bottom: 5px; text-transform: uppercase;
+    }
+
+    /* --- DICE OVERLAY --- */
+    .dice-overlay {
+      position: absolute; inset: 0; z-index: 50; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .dice-overlay.active { opacity: 1; pointer-events: auto; }
+    
+    .dice-title {
+      font-family: var(--font-deco); font-size: 3rem; color: var(--gold); margin-bottom: 20px;
+    }
+    .dice-pool-info {
+      font-family: var(--font-title); font-size: 14px; letter-spacing: 2px; color: var(--parchment-dim);
+      margin-bottom: 40px; text-transform: uppercase;
+    }
+    
+    .dice-results {
+      display: flex; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center; max-width: 800px;
+    }
+    .die {
+      width: 60px; height: 60px; background: rgba(20,0,0,0.8); border: 2px solid var(--blood);
+      color: #fff; font-family: var(--font-title); font-size: 24px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center; border-radius: 8px;
+      box-shadow: 0 0 15px rgba(139,0,0,0.5); transform: scale(0);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popIn { to { transform: scale(1); } }
+    
+    .die.success { border-color: #33ff33; box-shadow: 0 0 15px rgba(51,255,51,0.5); color: #33ff33; }
+    .die.fail { border-color: #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.5); color: #ff3333; opacity: 0.5; }
+    
+    .dice-final-msg {
+      font-family: var(--font-deco); font-size: 2rem;
+    }
+    .msg-success { color: #33ff33; text-shadow: 0 0 20px #33ff33; }
+    .msg-fail { color: #ff3333; text-shadow: 0 0 20px #ff3333; }
+
+    .btn-continue {
+      margin-top: 30px; background: var(--blood); border: none; color: #fff;
+      font-family: var(--font-title); font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 12px 30px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-continue:hover { background: var(--blood-bright); box-shadow: 0 0 15px var(--blood-glow); }
+
+  </style>
+</head>
+<body>
+
+  <div class="vn-container" id="vn-container">
+    <div class="vn-bg-overlay"></div>
+    
+    <header class="vn-topbar">
+      <div class="vn-topbar-title" id="t-mission">Nome da Missão</div>
+      <div class="vn-stats">
+        <div class="stat-badge">Fome <span class="stat-val blood" id="s-fome">-</span></div>
+        <div class="stat-badge">Vontade <span class="stat-val" id="s-fdv">-</span></div>
+        <div class="stat-badge">Humanidade <span class="stat-val" id="s-hum">-</span></div>
+        <button onclick="window.location.href='vampiro.html'" style="background:transparent; border:1px solid var(--border-mid); color:var(--parchment-dim); padding:5px 10px; cursor:pointer; border-radius:4px; font-family:var(--font-title);">Sair</button>
+      </div>
+    </header>
+
+    <div class="vn-portrait-area">
+      <img src="" id="char-portrait" class="vn-portrait" alt="Personagem" />
+    </div>
+
+    <div class="vn-dialog-area">
+      <div class="vn-dialog-box">
+        <div class="vn-scene-title" id="d-title">Cena Inicial</div>
+        <div class="vn-story-text" id="d-desc">Carregando a narrativa...</div>
+        <div class="vn-actions" id="d-actions">
+          <!-- Botões injetados via JS -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tela de Rolagem de Dados -->
+    <div class="dice-overlay" id="dice-overlay">
+      <div class="dice-title">Rolagem de Dados</div>
+      <div class="dice-pool-info" id="dice-info">Ação Física (Força + Briga) · Dificuldade: 6</div>
+      <div class="dice-results" id="dice-results">
+        <!-- Dados injetados aqui -->
+      </div>
+      <div class="dice-final-msg" id="dice-msg"></div>
+      <button class="btn-continue" id="btn-continue" style="display:none;">Continuar História</button>
+    </div>
+
+  </div>
+
+  <script src="data/characters.js"></script>
+  <script src="data/missoes.js"></script>
+  <script src="aventura_vn.js"></script>
+</body>
+</html>
