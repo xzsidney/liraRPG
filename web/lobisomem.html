@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobisomem: O Apocalipse — LiraRPG</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style_lobo.css" />
+  <style>
+    /* Estilos base para a estética Garou (sobreposição ao tema Vampiro) */
+    :root {
+      --gold: #c4894a;
+      --gold-dim: #8b6034;
+      --blood: #4a5c3a; /* Verde musgo escuro */
+      --blood-bright: #6abf69; /* Verde uivo */
+      --blood-glow: rgba(106, 191, 105, 0.4);
+      --bg-color: #0c0f0a; /* Fundo mais orgânico */
+      --border-dark: #2a2f26;
+      --border-mid: #3d4536;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PARTICLE BACKGROUND (Poeira estelar/Espíritos) -->
+  <div id="particles"></div>
+
+  <!-- CABEÇALHO -->
+  <header id="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo" id="logo-btn" tabindex="0">
+        <span class="logo-symbol">🐺</span>
+        <div class="logo-text">
+          <span class="logo-title">LiraRPG</span>
+          <span class="logo-sub">Sistema World of Darkness</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html" class="header-home-link" title="Voltar ao Menu Principal">⚜ Mundo das Trevas</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-game">Lobisomem: O Apocalipse</span>
+      </nav>
+    </div>
+    <div class="header-bar" style="background: linear-gradient(90deg, transparent, var(--blood), transparent);"></div>
+  </header>
+
+  <main>
+    <!-- MODO GALERIA -->
+    <section id="gallery-view" class="view-section active">
+      <div class="gallery-header">
+        <h1 class="gallery-title">A Nação Garou</h1>
+        <p class="gallery-desc">"Quando a Besta uivar, Gaia responderá."</p>
+      </div>
+
+      <!-- Filtros por Tribo (Mockado por enquanto, preenchido via JS) -->
+      <div class="filter-bar" id="filter-bar">
+        <!-- JS injeta os botões aqui -->
+      </div>
+
+      <div class="card-grid" id="card-grid">
+        <!-- JS injeta os cards dos Garous aqui -->
+      </div>
+    </section>
+
+    <!-- MODO FICHA DETALHADA -->
+    <section id="detail-view" class="view-section">
+      <div class="detail-top-nav">
+        <button id="back-btn" class="back-btn" aria-label="Voltar para galeria">← Voltar à Galeria</button>
+      </div>
+
+      <div id="detail-container">
+        <!-- JS constrói a ficha detalhada aqui -->
+      </div>
+    </section>
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer>
+    <p class="lore-text">
+      "Nós somos os guerreiros de Gaia. Quando a Wyrm tentar devorar o mundo, nós arrancaremos sua garganta."
+    </p>
+    <div class="footer-bottom">
+      LIRARPG · LOBISOMEM: O APOCALIPSE · SISTEMA WORLD OF DARKNESS
+    </div>
+  </footer>
+
+  <script>
+    // Configurações das Tribos para cores e ícones (Tema Garou)
+    const TRIBO_CONFIG = {
+      "Caçadores das Tempestades":  { cor: "#1a3a5c", corTexto: "#6fa8dc", icone: "❄️", apelido: "Fúria do Inverno" },
+      "Crias de Fenris":            { cor: "#5c1a1a", corTexto: "#e07070", icone: "🐺", apelido: "Guerreiros" },
+      "Senhores das Sombras":       { cor: "#2a2a2a", corTexto: "#aaaaaa", icone: "🌑", apelido: "Maquiavélicos" },
+      "Andarilhos do Asfalto":      { cor: "#1a5c5c", corTexto: "#6fc4c4", icone: "🏙️", apelido: "Tecnomantes" },
+      "Fianna":                     { cor: "#1a5c2a", corTexto: "#6fc47f", icone: "🦌", apelido: "Guardiões da Tradição" },
+      "Portadores da Luz Interior": { cor: "#5c5c1a", corTexto: "#e0e070", icone: "🧘", apelido: "Sábios" },
+      "Garras Vermelhas":           { cor: "#8a1a1a", corTexto: "#ff4d4d", icone: "🐾", apelido: "Puros" }
+    };
+  </script>
+  
+  <script src="data/characters_lobo.js"></script>
+  <script src="app_lobo.js"></script>
+
+</body>
+</html>

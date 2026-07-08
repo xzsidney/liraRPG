@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caçador: A Revanche — LiraRPG</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style_cacador.css" />
+  <style>
+    :root {
+      --cacador-orange: #ff8c00;
+      --cacador-orange-dim: #995400;
+      --cacador-bg: #121212;
+      --cacador-border: #333333;
+      --cacador-accent: #cc7000;
+      --cacador-text: #e0e0e0;
+      --font-cacador-title: 'Special Elite', monospace, serif;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="particles"></div>
+
+  <header id="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo" id="logo-btn" tabindex="0">
+        <span class="logo-symbol">🕯️</span>
+        <div class="logo-text">
+          <span class="logo-title">LiraRPG</span>
+          <span class="logo-sub">Sistema World of Darkness</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html" class="header-home-link" title="Voltar ao Menu Principal">⚜ Mundo das Trevas</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-game" style="color: var(--cacador-orange);">Caçador: A Revanche</span>
+      </nav>
+    </div>
+    <div class="header-bar" style="background: linear-gradient(90deg, transparent, var(--cacador-orange-dim), transparent);"></div>
+  </header>
+
+  <main>
+    <section id="gallery-view" class="view-section active">
+      <div class="gallery-header">
+        <h1 class="gallery-title" style="font-family: var(--font-cacador-title); color: var(--cacador-orange); letter-spacing: 2px;">Células de Caçadores</h1>
+        <p class="gallery-desc" style="font-family: monospace; color: #888;">"Eles vivem nas sombras. Nós somos a lanterna."</p>
+      </div>
+
+      <div class="filter-bar" id="filter-bar">
+      </div>
+
+      <div class="card-grid" id="card-grid">
+      </div>
+    </section>
+
+    <section id="detail-view" class="view-section">
+      <div class="detail-top-nav">
+        <button id="back-btn" class="back-btn" aria-label="Voltar para galeria">← Voltar aos Arquivos</button>
+      </div>
+
+      <div id="detail-container">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="lore-text" style="font-family: monospace; color: #666;">
+      > ACESSO RESTRITO. PROJETO REVANCHE. CONFIDENCIAL.
+    </p>
+    <div class="footer-bottom">
+      LIRARPG · CAÇADOR: A REVANCHE · SISTEMA WORLD OF DARKNESS
+    </div>
+  </footer>
+
+  <script>
+    const CREDO_CONFIG = {
+      "Oráculo (Visionary)":       { cor: "#ffaa00", icone: "👁️" },
+      "Juiz (Judge)":              { cor: "#cc0000", icone: "⚖️" },
+      "Vingador (Avenger)":        { cor: "#ff3300", icone: "🔥" },
+      "Mártir (Martyr)":           { cor: "#8800cc", icone: "🩸" },
+      "Inocente (Innocent)":       { cor: "#00ccff", icone: "🕊️" },
+      "Defensor (Defender)":       { cor: "#009933", icone: "🛡️" },
+      "Empreendedor (Entrepreneur)":{cor: "#cccccc", icone: "💼" },
+      "Inquisidor (Inquisitor)":   { cor: "#996633", icone: "🔍" },
+      "Desconhecido":              { cor: "#555555", icone: "❓" }
+    };
+  </script>
+  
+  <script src="data/characters_cacador.js"></script>
+  <script src="app_cacador.js"></script>
+
+</body>
+</html>
